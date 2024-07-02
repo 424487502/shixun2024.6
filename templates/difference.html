@@ -1,0 +1,68 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+
+    <div class="container">
+        <h2>找茬功能</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="image1">上传第一张图片:</label><br>
+            <input type="file" id="image1" name="image1" accept="image/*"><br><br>
+            <label for="image2">上传第二张图片:</label><br>
+            <input type="file" id="image2" name="image2" accept="image/*"><br><br>
+            <button type="submit">开始识别</button>
+        </form>
+        
+        {% if result %}
+            <h3>识别结果</h3>
+            <div class="result-container">
+                <img src="data:image/png;base64,{{ result_image_base64 }}" alt="识别结果图片">
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

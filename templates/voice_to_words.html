@@ -1,0 +1,102 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .transcription {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .loading-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 20px;
+        }
+    </style>
+
+    <div class="container">
+        <h2>语音识别</h2>
+        <form id="audioForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="audioFile">上传音频文件:</label>
+                <input type="file" id="audioFile" name="audio_file" accept="audio/*" required>
+            </div>
+            <button type="submit" class="btn btn-primary">开始识别</button>
+        </form>
+
+        <div id="loading" class="loading-text" style="display: none;">正在识别...</div>
+
+        <div id="transcription" class="transcription"></div>
+    </div>
+
+    <script>
+    document.getElementById('audioForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const loadingDiv = document.getElementById('loading');
+        const transcriptionDiv = document.getElementById('transcription');
+
+        loadingDiv.style.display = 'block';
+        transcriptionDiv.innerText = ''; // 清空之前的识别结果
+
+        fetch("{% url 'voice_to_words' %}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingDiv.style.display = 'none';
+            transcriptionDiv.innerText = data.transcribed_text;
+        })
+        .catch(error => {
+            loadingDiv.style.display = 'none';
+            console.error('Error:', error);
+        });
+    });
+    </script>
+{% endblock %}

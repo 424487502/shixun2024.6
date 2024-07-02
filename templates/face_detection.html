@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人脸识别</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/face_detection.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>人脸识别</h1>
+        <div class="video-container">
+            <img src="{% url 'video_feed' %}" width="100%">
+        </div>
+        <form method="POST" action="{% url 'face_recognition_login' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn">开始人脸识别登录</button>
+        </form>
+    </div>
+</body>
+</html>

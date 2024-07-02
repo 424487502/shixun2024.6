@@ -1,0 +1,67 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+
+    <div class="container">
+        <h2>数量检测</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="image">上传图片:</label><br>
+            <input type="file" id="image" name="image" accept="image/*" required><br><br>
+            <button type="submit">开始检测</button>
+        </form>
+        
+        {% if result %}
+            <h3>检测结果</h3>
+            <div class="result-container">
+                <p>检测出的数量: <span class="badge badge-success">{{ result.count }}</span></p>
+                <img src="data:image/jpeg;base64,{{ result.image_base64 }}" alt="检测结果图像">
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

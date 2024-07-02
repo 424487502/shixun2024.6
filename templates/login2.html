@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    {% load static %}
+    <link rel="stylesheet" href="/static/css/login.css">
+    <style>
+        /* Custom styles for the face detection button */
+        .face-detect-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Video element style */
+        #video {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>登录</h1>
+        <form id="login-form" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">登录</button>
+        </form>
+        
+        <!-- Face detection button below login form -->
+        <button id="face-detect-btn" class="face-detect-btn">人脸识别</button>
+        
+        <!-- Video element for camera stream -->
+        <video id="video" autoplay playsinline></video>
+        
+        <!-- Error message display -->
+        <p class="error_message">{% if messages %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}</p>
+        <p>还没有账号？ <a href="{% url 'register' %}">注册</a></p>
+    </div>
+
+    <!-- Script to handle face detection button and camera stream -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const faceDetectBtn = document.getElementById('face-detect-btn');
+            const video = document.getElementById('video');
+
+            faceDetectBtn.addEventListener('click', function() {
+                // Show the video element
+                video.style.display = 'block';
+
+                // Check for browser support of getUserMedia
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert('您的浏览器不支持视频流，请尝试使用最新版本的浏览器。');
+                    return;
+                }
+
+                // Function to handle streaming of video from camera
+                function startVideoStream() {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(function(stream) {
+                            video.srcObject = stream;
+                            video.play();
+                        })
+                        .catch(function(error) {
+                            console.error('无法访问摄像头: ', error);
+                            alert('无法访问您的摄像头，请检查设备或浏览器设置。');
+                        });
+                }
+
+                // Start streaming video when button is clicked
+                startVideoStream();
+            });
+        });
+    </script>
+</body>
+</html>

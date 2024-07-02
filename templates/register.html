@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册</title>
+    {% load static %}
+    <link rel="stylesheet" href="/static/css/register.css">
+</head>
+<body>
+    <div class="container">
+        <h1>注册</h1>
+        <form id="registerForm" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">确认密码:</label>
+                <input type="password" id="password2" name="password2" required>
+            </div>
+            <div class="form-group">
+                <label for="utel">电话:</label>
+                <input type="text" id="utel" name="utel">
+            </div>
+            <button type="submit">注册</button>
+        </form>
+        <p id="error_message" class="error_message"></p>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').onsubmit = function(event) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (password !== confirmPassword) {
+                document.getElementById('error_message').innerText = "密码和确认密码不匹配";
+                event.preventDefault();
+            }
+        };
+    </script>
+</body>
+</html>

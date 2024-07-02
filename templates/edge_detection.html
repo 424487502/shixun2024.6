@@ -1,0 +1,155 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">边缘检测</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>上传图片</h2>
+            <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+            <input type="file" id="image-input" accept="image/*" class="form-control" />
+            <button class="btn btn-primary mt-2" onclick="uploadImage()">上传并处理</button>
+            <div class="image-container">
+                <img id="original-image" class="img-thumbnail" alt="Original Image" />
+                <img id="processed-image" class="img-thumbnail" alt="Processed Image" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>摄像头</h2>
+            <button id="start-camera-btn" class="btn btn-primary mt-2" onclick="startCamera()">开始摄像头</button>
+            <button id="stop-camera-btn" class="btn btn-danger mt-2" onclick="stopCamera()" style="display: none;">关闭摄像头</button>
+            <div class="video-container">
+                <img id="camera-feed" class="img-thumbnail" style="display: none;" alt="Camera Feed" />
+                <img id="processed-camera-feed" class="img-thumbnail" style="display: none;" alt="Processed Camera Feed" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        padding: 20px;
+    }
+    .row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    .col-md-6 {
+        flex: 0 0 48%;
+        box-sizing: border-box;
+    }
+    .btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+    .image-container,
+    .video-container {
+        margin-top: 20px;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+    }
+    .img-thumbnail {
+        width: 100%;
+        height: auto;
+        margin-top: 10px;
+        display: block;
+    }
+    .text-center {
+        text-align: center;
+    }
+</style>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function uploadImage() {
+        const input = document.getElementById('image-input');
+        const csrftoken = getCookie('csrftoken');
+        if (input.files && input.files[0]) {
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+
+            fetch('/upload_image/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                } else {
+                    const originalImage = document.getElementById('original-image');
+                    const processedImage = document.getElementById('processed-image');
+                    originalImage.src = 'data:image/jpeg;base64,' + data.original;
+                    processedImage.src = 'data:image/jpeg;base64,' + data.processed;
+                    originalImage.style.display = 'block';
+                    processedImage.style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+    function startCamera() {
+        const cameraFeed = document.getElementById('camera-feed');
+        const processedCameraFeed = document.getElementById('processed-camera-feed');
+        cameraFeed.src = "/stream_camera/";
+        cameraFeed.style.display = 'block';
+        processedCameraFeed.src = "/stream_edge/";
+        processedCameraFeed.style.display = 'block';
+
+        document.getElementById('start-camera-btn').style.display = 'none';
+        document.getElementById('stop-camera-btn').style.display = 'inline';
+    }
+
+    function stopCamera() {
+        const cameraFeed = document.getElementById('camera-feed');
+        const processedCameraFeed = document.getElementById('processed-camera-feed');
+        cameraFeed.style.display = 'none';
+        processedCameraFeed.style.display = 'none';
+        cameraFeed.src = "";
+        processedCameraFeed.src = "";
+
+        document.getElementById('start-camera-btn').style.display = 'inline';
+        document.getElementById('stop-camera-btn').style.display = 'none';
+    }
+</script>
+{% endblock %}

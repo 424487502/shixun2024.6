@@ -1,0 +1,77 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>体育运动识别</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="image" id="image-input" accept="image/*" required>
+        <button type="submit">开始识别</button>
+    </form>
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('image', document.getElementById('image-input').files[0]);
+
+    const response = await fetch("{% url 'classify' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    });
+
+    const result = await response.json();
+    document.getElementById('result').innerText = `预测结果是：${result.result}`;
+});
+</script>
+
+<style>
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="file"] {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #007bff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+}
+</style>
+{% endblock %}

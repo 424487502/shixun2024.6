@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册成功</title>
+    <script>
+        // 自动跳转到主页
+        setTimeout(function() {
+            window.location.href = '/';
+        }, 3000); // 3秒钟后跳转
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .message-box {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .message-box h1 {
+            color: green;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="message-box">
+        <h1>注册成功！</h1>
+        <p>页面将在 <span id="countdown">3</span> 秒钟后跳转到主页。</p>
+    </div>
+    <script>
+        // 倒计时功能
+        let countdown = document.getElementById('countdown');
+        let seconds = 3;
+        setInterval(function() {
+            seconds--;
+            countdown.textContent = seconds;
+        }, 1000);
+    </script>
+</body>
+</html>

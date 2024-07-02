@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>登录</h1>
+        <form id="login-form" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">登录</button>
+        </form>
+        
+        <a href="{% url 'face_detection' %}" class="btn face-detect-btn">人脸识别</a>
+        <a href="/admin/" class="btn admin-btn">管理用户登录</a>
+        
+        <p class="error_message">{% if messages %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}</p>
+        <p>还没有账号？ <a href="{% url 'register' %}">注册</a></p>
+    </div>
+</body>
+</html>

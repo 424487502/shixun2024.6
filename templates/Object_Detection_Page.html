@@ -1,0 +1,64 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>目标检测</h1>
+    <div class="video-container" style="position: relative; width: 640px; height: 360px; margin: 0 auto; background: #000;">
+        <img id="video" src="" alt="检测视频流" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+    </div>
+    <button id="start-btn" class="btn btn-primary" onclick="startDetection()" style="margin-top: 20px;">开始检测</button>
+    <button id="stop-btn" class="btn btn-danger" onclick="stopDetection()" style="margin-top: 20px; display: none;">结束检测</button>
+</div>
+
+<style>
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+</style>
+
+<script>
+    function startDetection() {
+        fetch('/start_detection/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === '检测已开始') {
+                    document.getElementById('start-btn').style.display = 'none';
+                    document.getElementById('stop-btn').style.display = 'inline';
+                    document.getElementById('video').style.display = 'block';
+                    document.getElementById('video').src = "{% url 'get_video' %}";
+                }
+            });
+    }
+
+    function stopDetection() {
+        fetch('/stop_detection/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === '检测已停止') {
+                    document.getElementById('start-btn').style.display = 'inline';
+                    document.getElementById('stop-btn').style.display = 'none';
+                    document.getElementById('video').style.display = 'none';
+                    document.getElementById('video').src = "";
+                }
+            });
+    }
+</script>
+{% endblock %}
